@@ -5,7 +5,6 @@ using SocialBrothersBackEndCase.Repositories;
 using SocialBrothersBackEndCase.Dtos;
 using Newtonsoft.Json.Linq;
 
-
 namespace SocialBrothersBackEndCase.Controllers
 {
 
@@ -26,8 +25,11 @@ namespace SocialBrothersBackEndCase.Controllers
                 var random = InMemAddressesRepository.houseNumbers[Random.Shared.Next(InMemAddressesRepository.houseNumbers.Length)].ToString();
 
                 var existingItem = db.List.Where(u => u.city == SearchByCity).FirstOrDefault();
-              //  var existingItem = db.List.OrderByDescending(u => u.city == SearchByCity);
-               // var existingItem = db.List.OrderBy(e => e.city).ThenBy(e => e.city).ThenByDescending(e => e.city).FirstOrDefault();
+                
+              //var existingItem = db.List.OrderByDescending(u => u.city == SearchByCity);
+              
+              //var existingItem = db.List.OrderBy(e => e.city).ThenBy(e => e.city).ThenByDescending(e => e.city).FirstOrDefault();
+               
                 return Enumerable.Range(1, 5).Select(index =>  new DataList
                 {
                     Id = Guid.Parse( existingItem.id),
@@ -39,12 +41,9 @@ namespace SocialBrothersBackEndCase.Controllers
                 })
                            .ToArray();
             }
-           
-
         }
 
         //Gets one address row from the database
-
         [HttpGet("{id}" + "   Get one address row from the database")]
 
         public ActionResult<DataList> GetData(Guid id)
@@ -52,6 +51,7 @@ namespace SocialBrothersBackEndCase.Controllers
             using (var db = new Context())
             {
                 var item = db.List.Where(u => u.id == id.ToString()).FirstOrDefault();
+                
                 if (item is null)
                 {
                     return NotFound();
@@ -67,15 +67,13 @@ namespace SocialBrothersBackEndCase.Controllers
         {
 
             var items = new List<InsertIntoDatabase>();
-
             
-              
-           
             using (var db = new Context())
             {
 
                 db.Add(new InsertIntoDatabase
                 {
+                
                     id = Guid.NewGuid().ToString(),
                     street = InMemAddressesRepository.streets[Random.Shared.Next(InMemAddressesRepository.streets.Length)],
                     house_number = InMemAddressesRepository.houseNumbers[Random.Shared.Next(InMemAddressesRepository.houseNumbers.Length)],
@@ -85,35 +83,40 @@ namespace SocialBrothersBackEndCase.Controllers
 
                 });
 
-               
                 try
                 {
                     db.SaveChanges();
                 }
+                
                 catch (Exception ex)
                 {
                     Exception newEx = new Exception("Method failed.");
                     throw newEx;
                 }
+                
                 return items;
               
             }
-
         }
+        
         //PUT /DataList/{id}
         [HttpPut("{id}" + "   Update choosen guid id record")]
         public ActionResult UpdateItem(Guid id, UpdateItemDto itemDto)
         {
             using (var db = new Context())
+            
             {
+            
                 var existingItem = db.List.Where(u => u.id == id.ToString()).FirstOrDefault();
 
                 if (existingItem is null)
                 {
                     return NotFound();
                 }
+                
                 db.Add(new InsertIntoDatabase
                 {
+                
                     id = existingItem.id.ToString() + "----Updated----" + DateTime.Now.ToString(),
                     street = existingItem.street,
                     house_number = existingItem.house_number,
@@ -122,16 +125,20 @@ namespace SocialBrothersBackEndCase.Controllers
                     country = existingItem.country
 
                 });
+                
                 db.SaveChanges();
+                
                 if (existingItem.country != null)
                 {
                     db.Remove(existingItem);
                     db.SaveChanges();
                 }
+                
                 else
                 {
                     return NotFound();
                 }
+                
                 return CreatedAtAction(nameof(UpdateItem), id);
             }
         }
@@ -148,15 +155,18 @@ namespace SocialBrothersBackEndCase.Controllers
                 {
                     return NotFound();
                 }
+                
                 if (existingItem.country != null)
                 {
                     db.Remove(existingItem);
                     db.SaveChanges();
                 }
+                
                 else
                 {
                     return NotFound();
                 }
+                
                 return CreatedAtAction(nameof(DeleteItem), id);
             }
         }
@@ -179,11 +189,10 @@ namespace SocialBrothersBackEndCase.Controllers
             url = url.Replace(" ", "+");
             string content = fileGetContents(url);
             JObject o = JObject.Parse(content);
+            
             try
             {
-
                 distance = (int)o.SelectToken("routes[0].legs[0].distance.value");
-
                 return distance;
             }
             catch
@@ -203,7 +212,6 @@ namespace SocialBrothersBackEndCase.Controllers
                     System.Net.WebClient wc = new System.Net.WebClient();
                     byte[] response = wc.DownloadData(fileName);
                     sContents = System.Text.Encoding.ASCII.GetString(response);
-
                 }
                 else
                 {
