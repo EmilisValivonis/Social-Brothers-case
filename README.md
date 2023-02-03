@@ -1,7 +1,7 @@
 Software used:
-	Windows 10 
-	Visual studio 2022
-	DB browser for SQLite
+	Windows 10, 
+	Visual studio 2022,
+	DB browser for SQLite,
 
 How to run the project
 
