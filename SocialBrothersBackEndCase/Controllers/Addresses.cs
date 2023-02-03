@@ -18,28 +18,37 @@ namespace SocialBrothersBackEndCase.Controllers
     {
         //Gets addresses  
         [HttpGet("{SearchByCity}" + "   By Ascending Order")]
-        public IEnumerable<DataList> GetAddresses(string SearchByCity)
+        public ActionResult <IEnumerable<DataList>> GetAddresses(string SearchByCity)
         {
             using (var db = new Context())
             {
                 var random = InMemAddressesRepository.houseNumbers[Random.Shared.Next(InMemAddressesRepository.houseNumbers.Length)].ToString();
 
                 var existingItem = db.List.Where(u => u.city == SearchByCity).FirstOrDefault();
-                
-              //var existingItem = db.List.OrderByDescending(u => u.city == SearchByCity);
-              
-              //var existingItem = db.List.OrderBy(e => e.city).ThenBy(e => e.city).ThenByDescending(e => e.city).FirstOrDefault();
-               
-                return Enumerable.Range(1, 5).Select(index =>  new DataList
+
+                //var existingItem = db.List.OrderByDescending(u => u.city == SearchByCity);
+
+                //var existingItem = db.List.OrderBy(e => e.city).ThenBy(e => e.city).ThenByDescending(e => e.city).FirstOrDefault();
+
+                if(InMemAddressesRepository.cities.Contains(SearchByCity))
                 {
-                    Id = Guid.Parse( existingItem.id),
-                    house_number = existingItem.house_number,
-                    street = existingItem.street,
-                    zip_code = existingItem.zip_code,
-                    city = existingItem.city,
-                    country = "The Netherlands",
-                })
-                           .ToArray();
+                    return Enumerable.Range(1, 5).Select(index => new DataList
+                    {
+                        Id = Guid.Parse(existingItem.id),
+                        house_number = existingItem.house_number,
+                        street = existingItem.street,
+                        zip_code = existingItem.zip_code,
+                        city = existingItem.city,
+                        country = "The Netherlands",
+                        
+                    })
+           .ToArray();
+
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
         }
 
