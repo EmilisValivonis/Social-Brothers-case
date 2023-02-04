@@ -49,8 +49,7 @@ However search is working but it could be more implemented. I’m currently empl
 
 Also some parts could be more implemented like: 
 
-	GET/addresses/ should not be firstordefault() but listed and mapped array and give proper not found
-	error exception 
+	GET/addresses/ should not be firstordefault() but listed and mapped array 
 
 	PUT/addresses/:id could have more updatable fields
 
